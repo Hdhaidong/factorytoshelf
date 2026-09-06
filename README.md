@@ -1,6 +1,8 @@
 # FactoryToShelf 从工厂到货架
 
-**独立主页**：https://factorytoshelf.hdhaidong.workers.dev
+**独立主页**：
+- 自定义域名（大陆可访问）：https://factorytoshelf.insightmarketplac.com
+- Workers 域名：https://factorytoshelf.hdhaidong.workers.dev
 
 美国渠道公司获客站：帮中国工厂与品牌把产品铺进美国主流零售货架（深圳运营中心 + 美国海外仓双基地）。
 
