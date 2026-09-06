@@ -1,0 +1,58 @@
+name: Deploy site to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build site with /factorytoshelf/ base path
+        run: |
+          set -eu
+          cp -r site _site
+          cd _site
+          touch .nojekyll
+          # 1. self-domain absolute URLs -> GitHub Pages home
+          grep -rl --include='*.html' --include='*.js' --include='*.xml' --include='*.txt' --include='*.css' 'factorytoshelf.hdhaidong.workers.dev' . | while read -r f; do
+            sed -i 's#factorytoshelf\.hdhaidong\.workers\.dev#hdhaidong.github.io/factorytoshelf#g' "$f"
+          done
+          # 2. API calls -> live Worker backend (CORS enabled, mainland-accessible)
+          grep -rl --include='*.html' --include='*.js' '"/api/' . | while read -r f; do
+            sed -i 's#"/api/#"https://factorytoshelf.insightmarketplac.com/api/#g' "$f"
+          done
+          # 3. root-absolute references -> /factorytoshelf/ base prefix
+          grep -rl --include='*.html' '="/' . | while read -r f; do
+            sed -i 's#="/#="/factorytoshelf/#g' "$f"
+          done
+          # 4. meta-refresh url=/ -> base prefix
+          grep -rl --include='*.html' 'url=/' . | while read -r f; do
+            sed -i 's#url=/#url=/factorytoshelf/#g' "$f"
+          done
+          echo '--- rewritten root-absolute refs (sample):'
+          grep -rho '="/factorytoshelf/[^" ]*' --include='*.html' . | sort -u | head -12 || true
+          echo '--- remaining workers.dev files:'
+          grep -rl 'workers.dev' . | head -5 || true
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deploy
+        uses: actions/deploy-pages@v4

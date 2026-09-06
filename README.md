@@ -1,7 +1,8 @@
 # FactoryToShelf 从工厂到货架
 
 **独立主页**：
-- 自定义域名（大陆可访问）：https://factorytoshelf.insightmarketplac.com
+- GitHub Pages（本仓 push main 自动部署）：https://hdhaidong.github.io/factorytoshelf/
+- 自定义域名（大陆可访问，含 AI 客服/注册等后端能力）：https://factorytoshelf.insightmarketplac.com
 - Workers 域名：https://factorytoshelf.hdhaidong.workers.dev
 
 美国渠道公司获客站：帮中国工厂与品牌把产品铺进美国主流零售货架（深圳运营中心 + 美国海外仓双基地）。
@@ -42,7 +43,15 @@ npx wrangler d1 execute factorytoshelf-db --remote --file=schema.sql
 
 ## 隶属关系
 
-本仓为独立仓，隶属合并总仓 [`insight-shelf`](https://github.com/Hdhaidong/insight-shelf)（factorytoshelf + insightmarketplac 两项目合并视图）。两个站点各自保持独立 Worker 主页，互不影响。
+本仓为独立仓，隶属合并总仓 [`insight-shelf`](https://github.com/Hdhaidong/insight-shelf)（factorytoshelf + insightmarketplac 两项目合并视图）。两个站点各自保持独立 GitHub Pages 主页，互不影响。
+
+## GitHub Pages 部署
+
+`.github/workflows/pages.yml` 在 push main 时自动把 `site/` 部署到 https://hdhaidong.github.io/factorytoshelf/ ，构建时自动做三类改写：
+
+1. `factorytoshelf.hdhaidong.workers.dev` 绝对自引用 → `hdhaidong.github.io/factorytoshelf`
+2. `"/api/...` 调用 → `https://factorytoshelf.insightmarketplac.com/api/...`（Worker 后端，CORS 已开）
+3. 根绝对引用（`="/..."`、`url=/...`）→ `/factorytoshelf/...` 前缀
 
 ## 来源说明
 
