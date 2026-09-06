@@ -3,8 +3,17 @@
 (function () {
   if (document.getElementById("fts-nav")) return;
 
+  /* fts-nav-base: auto-detect deployment root (Workers "/" vs GitHub Pages "/factorytoshelf") */
+  var BASE = (function () {
+    var s = document.currentScript && document.currentScript.src;
+    if (!s) return "";
+    var m = s.match(/^(.*\/)assets\/js\/nav\.js(?:\?.*)?$/);
+    return m ? m[1].replace(/\/$/, "") : "";
+  })();
+
   var NAV = [
     { t: "首页", h: "/" },
+    { t: "全站页面", h: "/pages.html" },
     { t: "供应商入驻", h: "/supplier.html" },
     {
       t: "渠道频道", sub: [
@@ -83,6 +92,7 @@
     return p || "/";
   }
   function matches(itemPath) {
+    itemPath = BASE + itemPath;
     var cur = norm(location.pathname), target = norm(itemPath);
     if (cur === target) return true;
     if (target !== "/" && cur.indexOf(target + "/") === 0) return true;
@@ -99,7 +109,7 @@
   NAV.forEach(function (item) {
     if (item.sub) {
       var subs = item.sub.map(function (s) {
-        return '<a href="' + s.h + '"' + (matches(s.h) ? ' class="on"' : '') + '>' + s.t + '</a>';
+        return '<a href="' + BASE + s.h + '"' + (matches(s.h) ? ' class="on"' : '') + '>' + s.t + '</a>';
       }).join("");
       var hasOn = item.sub.some(function (s) { return matches(s.h); });
       linksHtml += '<div class="ftsn-item has-sub">'
@@ -115,15 +125,15 @@
     if (item.sub) {
       mobileHtml += '<a class="ftsn-mhead">' + item.t + '</a>';
       item.sub.forEach(function (s) {
-        mobileHtml += '<a href="' + s.h + '"' + (matches(s.h) ? ' class="on"' : '') + '>' + s.t + '</a>';
+        mobileHtml += '<a href="' + BASE + s.h + '"' + (matches(s.h) ? ' class="on"' : '') + '>' + s.t + '</a>';
       });
     } else {
-      mobileHtml += '<a href="' + item.h + '"' + (matches(item.h) ? ' class="on"' : '') + '>' + item.t + '</a>';
+      mobileHtml += '<a href="' + BASE + item.h + '"' + (matches(item.h) ? ' class="on"' : '') + '>' + item.t + '</a>';
     }
   });
 
   nav.innerHTML = '<div class="ftsn-in">'
-    + '<a class="ftsn-brand" href="/">' + LOGO + 'Factory<em>ToShelf</em></a>'
+    + '<a class="ftsn-brand" href="' + BASE + '/">' + LOGO + 'Factory<em>ToShelf</em></a>'
     + '<div class="ftsn-links">' + linksHtml + '</div>'
     + '<div class="ftsn-cta">'
     + '<a class="ftsn-btn g" href="/register.html?tab=buyer" style="color:#A7ADB8;font-size:.84rem;text-decoration:none">买家注册</a>'
