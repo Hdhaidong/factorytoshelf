@@ -29,8 +29,8 @@ jobs:
           cd _site
           touch .nojekyll
           # 1. self-domain absolute URLs -> GitHub Pages home
-          grep -rl --include='*.html' --include='*.js' --include='*.xml' --include='*.txt' --include='*.css' 'factorytoshelf.hdhaidong.workers.dev' . | while read -r f; do
-            sed -i 's#factorytoshelf\.hdhaidong\.workers\.dev#hdhaidong.github.io/factorytoshelf#g' "$f"
+          grep -rl --include='*.html' --include='*.js' --include='*.xml' --include='*.txt' --include='*.css' -e 'factorytoshelf.hdhaidong.workers.dev' -e 'factorytoshelf.insightmarketplac.com' . | while read -r f; do
+            sed -i -e 's#factorytoshelf\.hdhaidong\.workers\.dev#hdhaidong.github.io/factorytoshelf#g' -e 's#factorytoshelf\.insightmarketplac\.com#hdhaidong.github.io/factorytoshelf#g' "$f"
           done
           # 2. API calls -> live Worker backend (CORS enabled, mainland-accessible)
           grep -rl --include='*.html' --include='*.js' '"/api/' . | while read -r f; do
